@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>DLE RelatedNews Templates</name>
+	<description>Разные шаблоны для похожих новостей</description>
+	<icon></icon>
+	<version>0.0.1</version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl>https://gitcdn.link/repo/DLE-Store/DLE-RelatedNews-Templates/main/update.json</upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[В fullstory.tpl прописывать так
+[cat-list=1,2,3]{related-news:relatednews_2}[/cat-list]
+
+Портировал для системы плагинов – zettend
+Автор оригинального хака – PunPun
+Автор модификации – alex32
+
+Оригинальная тема – https://vk.cc/c4iikQ]]></notice>
+	<file name="engine/modules/show.full.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$tpl2->load_template( 'relatednews.tpl' );]]></searchcode>
+			<replacecode><![CDATA[				$tpl2 = new dle_template();
+				$tpl2->dir = TEMPLATE_DIR;
+				if (stripos($tpl->copy_template, "{related-news:") !== false)
+{
+    preg_match("#\\{related-news:(.+?)\\}#is", $tpl->copy_template, $related_matches);
+    $tpl2->load_template( $related_matches[1] . '.tpl' );
+}
+else
+    $tpl2->load_template( 'relatednews.tpl' );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$tpl->set( '{related-news}', $related_buffer );]]></searchcode>
+			<replacecode><![CDATA[if (stripos($tpl->copy_template, "{related-news:") !== false)
+    $tpl->set( '{related-news:'.$related_matches[1].'}', $related_buffer );
+else
+    $tpl->set( '{related-news}', $related_buffer );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[				$related_buffer = $tpl2->result['content'];
+				unset($tpl2);
+				$db->free();
+
+				if ( $first_show ) {
+					if ( count($related_ids) ) {
+						$related_ids = implode(",",$related_ids);
+						$db->query( "UPDATE " . PREFIX . "_post_extras SET related_ids='{$related_ids}' WHERE news_id='{$row['id']}'" );
+					}
+				}
+
+				if ( $allow_full_cache ) create_cache( "related", $related_buffer, $row['id'].$config['skin'], true );
+			}]]></searchcode>
+			<replacecode><![CDATA[				$related_buffer = $tpl2->result['content'];
+				unset($tpl2);
+				$db->free();
+
+				if ( $first_show ) {
+					if ( count($related_ids) ) {
+						$related_ids = implode(",",$related_ids);
+						$db->query( "UPDATE " . PREFIX . "_post_extras SET related_ids='{$related_ids}' WHERE news_id='{$row['id']}'" );
+					}
+				}
+
+				if ( $allow_full_cache ){					
+	if (stripos($tpl->copy_template, "{related-news:") !== false){
+		create_cache( $related_matches[1], $related_buffer, $row['id'].$config['skin'], true );										 
+	}else{
+	create_cache( "related", $related_buffer, $row['id'].$config['skin'], true );
+	}					
+}
+			}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$tpl->set( '{related-news}', $related_buffer );]]></searchcode>
+			<replacecode><![CDATA[			if (stripos($tpl->copy_template, "{related-news:") !== false)
+    $tpl->set( '{related-news:'.$related_matches[1].'}', $related_buffer );
+else
+    $tpl->set( '{related-news}', $related_buffer );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
