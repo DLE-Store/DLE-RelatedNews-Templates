@@ -20,8 +20,8 @@
 [cat-list=1,2,3]{related-news:relatednews_2}[/cat-list]
 ```
 
-Портировал для системы плагинов – [zettend](https://github.com/zettend)
-Автор оригинального хака – PunPun
-Автор модификации – [alex32](https://forum.dle-news.ru/profile/71164-alex32/)
+- Портировал для системы плагинов – [zettend](https://github.com/zettend)
+- Автор оригинального хака – PunPun
+- Автор модификации – [alex32](https://forum.dle-news.ru/profile/71164-alex32/)
 
 Оригинальная тема – [Разные шаблоны для похожих новостей](https://vk.cc/c4iikQ)
